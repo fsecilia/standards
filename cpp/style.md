@@ -96,7 +96,7 @@ class Renderer {
 public:
     virtual ~Renderer() = default;
 
-    virtual auto render(const Frame& frame) -> void = 0;
+    virtual auto render(Frame const& frame) -> void = 0;
 };
 ```
 
@@ -226,15 +226,15 @@ Header self-containment and include ownership are defined in [`structure.md`](st
 
 ## C++
 
-Use `auto` for local variables unless it cannot express the intended declaration. When a local value is not intended to change, prefer `const auto`.
+Use `auto` for local variables unless it cannot express the intended declaration. Write `const` to the right of the type it qualifies. When a local value is not intended to change, prefer `auto const`.
 
-Preserve reference semantics explicitly. Bare `auto` creates a value and drops references and top-level `const`; use `auto&` or `const auto&` when the local is intended to refer to the original object. Use `auto&&` only when its reference-collapsing behavior is intentional.
+Preserve reference semantics explicitly. Bare `auto` creates a value and drops references and top-level `const`; use `auto&` or `auto const&` when the local is intended to refer to the original object. Use `auto&&` only when its reference-collapsing behavior is intentional. The same qualifier rule composes with pointers: `auto const*` points to a const value, while `auto* const` is a const pointer.
 
 For example:
 
 ```cpp
-const auto count = values.size();
-const auto& current = values.front();
+auto const count = values.size();
+auto const& current = values.front();
 auto& destination = outputs.back();
 ```
 
@@ -242,14 +242,14 @@ Explicit types are necessary for instances that are deliberately uninitialized u
 
 ```cpp
 int exponent;
-const auto fraction = std::frexp(value, &exponent);
+auto const fraction = std::frexp(value, &exponent);
 ```
 
 Use concrete trailing return types for functions:
 
 ```cpp
 auto size() const -> std::size_t;
-auto render(const Frame& frame) -> void;
+auto render(Frame const& frame) -> void;
 ```
 
 Do not use a deduced function return type only to avoid spelling the return type. Deduced return types are useful in some cases, but avoid them unless they are necessary.

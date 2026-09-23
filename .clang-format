@@ -27,7 +27,7 @@ AlignOperands: DontAlign
 AlignTrailingComments: false
 PointerAlignment: Left
 ReferenceAlignment: Pointer
-QualifierAlignment: Leave
+QualifierAlignment: Right
 
 # braces
 BreakBeforeBraces: Attach

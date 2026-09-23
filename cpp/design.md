@@ -108,14 +108,14 @@ When an operation is useful as an independently composable or replaceable piece 
 
 ```cpp
 struct FormatDiagnostic {
-    auto operator()(const Diagnostic& diagnostic) const -> std::string;
+    auto operator()(Diagnostic const& diagnostic) const -> std::string;
 };
 ```
 
 rather than:
 
 ```cpp
-auto formatDiagnostic(const Diagnostic& diagnostic) -> std::string;
+auto formatDiagnostic(Diagnostic const& diagnostic) -> std::string;
 ```
 
 Giving behavior a type lets it participate directly in dependency injection, be replaced in isolation tests, gain state or policy without changing the consumer's composition model, and compose naturally into larger object graphs.
