@@ -1,0 +1,261 @@
+# C++ Style
+
+This document defines shared C++ naming and source-level conventions.
+
+## Language and Toolchain
+
+Use C++26 mode for project-owned C++. Code must compile with GCC 14.2 and Clang 17.0 unless a project documents a newer compiler requirement.
+
+Compiler versions are build compatibility floors. Development tools are separate dependencies and may require newer LLVM versions than the supported compiler. A user who only builds the project does not need the formatting or linting tools unless that project's build explicitly requires them.
+
+## Mechanical Formatting
+
+The `.clang-format` and `.clang-tidy` files in Standards define the shared mechanical baseline. Consuming projects normally copy and check in those files so editors, builds, and other tooling can use them directly.
+
+Use clang-format 17.0.6 with the shared `.clang-format` and clang-tidy 19.1.0 with the shared `.clang-tidy`. A project may pin a different development-tool version only after verifying that it accepts the shared configuration and preserves the intended mechanical rules.
+
+A project may deliberately change its local configuration. Document that difference as a project exception instead of duplicating the mechanical rule in prose.
+
+## Naming
+
+Files and directories use `snake_case`, with `.hpp` and `.cpp` suffixes for C++ files. Types, type aliases, concepts, and enum values use `PascalCase`.
+
+Functions, variables, parameters, and constants use `camelCase`; namespaces use `snake_case`; and macros use `UPPER_SNAKE_CASE`.
+
+Constants use ordinary value names:
+
+```cpp
+constexpr auto maxPlayers = 16;
+```
+
+Do not decorate a name only to show that the value is constant.
+
+Private mutable instance data members use a trailing underscore.
+
+Public struct members use ordinary value naming:
+
+```cpp
+struct WindowDesc {
+    int width;
+    int height;
+    bool resizable;
+};
+```
+
+Treat acronyms as words:
+
+```cpp
+GpuDevice gpuDevice;
+HttpClient httpClient;
+XmlParser xmlParser;
+```
+
+## Names Describe Meaning
+
+Concrete types are named for what they are. Values are named for the role they play in the current context.
+
+Those names are often the same:
+
+```cpp
+Renderer renderer;
+```
+
+They do not have to be:
+
+```cpp
+LowerBoundBisector inverter;
+```
+
+`LowerBoundBisector` describes the mechanism. `inverter` describes the role of that instance.
+
+Dependency type parameters follow the same rule and describe the role required by the consumer:
+
+```cpp
+template <typename Inverter>
+struct Consumer {
+    Inverter inverter;
+};
+```
+
+The concrete dependency can then describe its actual mechanism:
+
+```cpp
+using LowerBoundBisectionConsumer = Consumer<LowerBoundBisector>;
+```
+
+Prefer names that describe meaning rather than implementation machinery.
+
+Do not use "foo", "bar", or other placeholder names for types or instances, even in examples.
+
+## Interfaces and Implementations
+
+An abstract runtime interface uses the natural name of the role it represents:
+
+```cpp
+class Renderer {
+public:
+    virtual ~Renderer() = default;
+
+    virtual auto render(const Frame& frame) -> void = 0;
+};
+```
+
+Do not add `I`, `Interface`, or `Abstract` just because the type is an interface.
+
+Concrete implementations add the qualifier that distinguishes them:
+
+```cpp
+VulkanRenderer
+SoftwareRenderer
+RemoteRenderer
+```
+
+If there is truly no useful qualifier and the implementation needs a separate name, an `-Impl` suffix may be used locally as an escape hatch. It is not a general naming convention.
+
+## Concepts
+
+Concepts use natural names for the category or requirement they express:
+
+```cpp
+Renderable
+Contiguous
+Arithmetic
+```
+
+Prefer an adjective when the category has a natural adjective. When a concept structurally models an existing noun-named abstraction, a `-Like` suffix is appropriate:
+
+```cpp
+Renderer
+RendererLike
+```
+
+## Template Parameters
+
+Name template parameters according to what they represent:
+
+```cpp
+template <typename Allocator, std::size_t capacity>
+class Container;
+```
+
+When a parameter is redeclared inside the type body, add its language category to avoid the name collision:
+
+```cpp
+template <typename AllocatorType, std::size_t capacityValue>
+class Container {
+public:
+    using Allocator = AllocatorType;
+    static constexpr auto capacity = capacityValue;
+};
+```
+
+Use `Type` for type parameters and `Value` for non-type template parameters when the names would otherwise collide. Do not add these suffixes when there is no collision.
+
+## Functional Types
+
+A type that represents one focused operation may be named directly for that operation:
+
+```cpp
+// GOOD
+FormatDiagnostic formatDiagnostic;
+ValidateMesh validateMesh;
+LoadTexture loadTexture;
+```
+
+Do not invent a noun-form type name just so the instance can use the natural verb name:
+```cpp
+// BAD
+MeshValidator validateMesh;
+```
+
+When the contextual role differs from the operation itself, name the instance for that role:
+
+```cpp
+// GOOD
+LowerBoundBisector inverter;
+```
+
+## Comments
+
+Comments explain purpose, constraints, invariants, or non-obvious behavior instead of narrating code whose meaning is already clear.
+
+Give a type or function a short summary when its purpose is not clear from its name. Write function summaries in the present tense with an implied "This function" subject: "Allocates memory for the requested elements," not "Allocate memory for the requested elements."
+
+Describe what a function does, including its contract, constraints, and important effects. Put comments about how the implementation works in the function body. Mention implementation details at the function boundary only when callers need to know them.
+
+Describe what a type represents or is responsible for rather than listing its members.
+
+Use block-level comments when several statements implement one non-obvious operation. Explain the approach once instead of commenting each line.
+
+## Testing
+
+Generally, test doubles are named like regular types and instances. There is no need to draw attention to the fact that an instance is a test double when it is the only object serving that role in the test.
+
+Use a test-double category in the name only when the distinction itself matters or avoids a collision.
+
+### Mocking with GMock
+
+When GMock is used with a value-semantic dependency, keep the value-semantic test double named normally and delegate its behavior to a separate mock object. In this pattern, prefix the GMock type with `Mock` and the mock instance with `mock`. This keeps the testing machinery distinct from the dependency that the production component sees.
+
+Give any mock type wrapped in a GMock decorator such as `StrictMock` a defaulted virtual destructor. GMock decorators derive from the mock type, and GoogleTest requires a virtual destructor for reliable decorator behavior.
+
+```cpp
+struct MockGenerator {
+    virtual ~MockGenerator() = default;
+
+    MOCK_METHOD(void, set, (int), (noexcept));
+    MOCK_METHOD(int, call, (), (const, noexcept));
+};
+
+struct Generator {
+    MockGenerator* mock = nullptr;
+
+    auto set(int value) noexcept -> void { mock->set(value); }
+    auto operator()() const noexcept -> int { return mock->call(); }
+};
+
+StrictMock<MockGenerator> mockGenerator;
+Generator generator{&mockGenerator};
+```
+
+## Headers
+
+Use `#pragma once` in project-owned headers.
+
+Header self-containment and include ownership are defined in [`structure.md`](structure.md#headers-are-self-contained).
+
+## C++
+
+Use `auto` for local variables unless it cannot express the intended declaration. When a local value is not intended to change, prefer `const auto`.
+
+Preserve reference semantics explicitly. Bare `auto` creates a value and drops references and top-level `const`; use `auto&` or `const auto&` when the local is intended to refer to the original object. Use `auto&&` only when its reference-collapsing behavior is intentional.
+
+For example:
+
+```cpp
+const auto count = values.size();
+const auto& current = values.front();
+auto& destination = outputs.back();
+```
+
+Explicit types are necessary for instances that are deliberately uninitialized until a later conditional assignment or used as an out parameter. For example:
+
+```cpp
+int exponent;
+const auto fraction = std::frexp(value, &exponent);
+```
+
+Use concrete trailing return types for functions:
+
+```cpp
+auto size() const -> std::size_t;
+auto render(const Frame& frame) -> void;
+```
+
+Do not use a deduced function return type only to avoid spelling the return type. Deduced return types are useful in some cases, but avoid them unless they are necessary.
+
+Use another return-type form only when required by external tooling or language integration, such as declarations processed by Qt MOC or exposed to QML.
+
+Use `[[nodiscard]]` when accidentally discarding a result would lose a resource or failure information. Do not apply it broadly to ordinary return values.
+
+Where this document is silent, follow the naming rules above and the nearby code.
