@@ -226,6 +226,15 @@ Header self-containment and include ownership are defined in [`structure.md`](st
 
 ## C++
 
+Prefer braces when constructing objects directly:
+
+```cpp
+Renderer renderer{device, queue};
+auto config = Config{width, height};
+```
+
+Use parentheses when braces would select different semantics or cannot express the intended construction. This most often matters for types with `std::initializer_list` constructors. For example, use `std::vector<int> values(8, -1);` when the intent is eight copies of `-1`; braces would instead construct a two-element vector.
+
 Use `auto` for local variables unless it cannot express the intended declaration. Write `const` to the right of the type it qualifies. When a local value is not intended to change, prefer `auto const`.
 
 Preserve reference semantics explicitly. Bare `auto` creates a value and drops references and top-level `const`; use `auto&` or `auto const&` when the local is intended to refer to the original object. Use `auto&&` only when its reference-collapsing behavior is intentional. The same qualifier rule composes with pointers: `auto const*` points to a const value, while `auto* const` is a const pointer.
