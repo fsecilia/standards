@@ -89,6 +89,98 @@ Prefer names that describe meaning rather than implementation machinery.
 
 Do not use "foo", "bar", or other placeholder names for types or instances, even in examples.
 
+## Construction
+
+Prefer braces when constructing objects directly:
+
+```cpp
+Renderer renderer{device, queue};
+auto config = Config{width, height};
+```
+
+Use parentheses when braces would select different semantics or cannot express the intended construction. This most often matters for types with `std::initializer_list` constructors. For example, use `std::vector<int> values(8, -1);` when the intent is eight copies of `-1`; braces would instead construct a two-element vector. Ordinary function calls continue to use parentheses.
+
+## Local Variables
+
+Use `auto` for local variables unless it cannot express the intended declaration. Write `const` to the right of the type it qualifies. When a local value is not intended to change, prefer `auto const`.
+
+Preserve reference semantics explicitly. Bare `auto` creates a value and drops references and top-level `const`; use `auto&` or `auto const&` when the local is intended to refer to the original object. Use `auto&&` only when its reference-collapsing behavior is intentional. The same qualifier rule composes with pointers: `auto const*` points to a const value, while `auto* const` is a const pointer.
+
+For example:
+
+```cpp
+auto const count = values.size();
+auto const& current = values.front();
+auto& destination = outputs.back();
+```
+
+Explicit types are necessary for instances that are deliberately uninitialized until a later conditional assignment or used as an out parameter. For example:
+
+```cpp
+int exponent;
+auto const fraction = std::frexp(value, &exponent);
+```
+
+## Function Declarations
+
+Use concrete trailing return types for functions:
+
+```cpp
+auto size() const -> std::size_t;
+auto render(Frame const& frame) -> void;
+```
+
+Do not use a deduced function return type only to avoid spelling the return type. Deduced return types are useful in some cases, but avoid them unless they are necessary.
+
+Use another return-type form only when required by external tooling or language integration, such as declarations processed by Qt MOC or exposed to QML.
+
+Use `[[nodiscard]]` when accidentally discarding a result would lose a resource or failure information. Do not apply it broadly to ordinary return values.
+
+## Constexpr
+
+Prefer `constexpr` for functions that can naturally support constant evaluation. Do not restructure an interface or complicate an implementation solely to make a function `constexpr`.
+
+In particular, use `constexpr` freely for small value-type operations, accessors, constructors, operators, and header-defined utilities when their implementation permits it.
+
+## Comments
+
+Comments explain purpose, constraints, invariants, or non-obvious behavior instead of narrating code whose meaning is already clear.
+
+Give a type or function a short summary when its purpose is not clear from its name. Write function summaries in the present tense with an implied "This function" subject: "Allocates memory for the requested elements," not "Allocate memory for the requested elements."
+
+Describe what a function does, including its contract, constraints, and important effects. Put comments about how the implementation works in the function body. Mention implementation details at the function boundary only when callers need to know them.
+
+Describe what a type represents or is responsible for rather than listing its members.
+
+Use block-level comments when several statements implement one non-obvious operation. Explain the approach once instead of commenting each line.
+
+Use `//` for ordinary comments, including comments that span several lines. Reserve `/* ... */` for comments embedded in C++ syntax where a line comment would not fit naturally, such as an omitted parameter name or a short argument annotation.
+
+Use `///` for Doxygen documentation comments. Use backslash commands such as `\param` and `\returns` rather than the equivalent `@` forms. Do not use `/** ... */` or `/*! ... */` for ordinary project documentation comments.
+
+For example:
+
+```cpp
+// Preserve the previous value until every validation step succeeds.
+// This keeps a failed update from changing visible state.
+auto const candidate = parseConfig(input);
+
+auto setCallback(Callback callback, int /*priority*/) -> void;
+auto result = parse(input, /*allowTrailing=*/false);
+
+/// Opens the requested asset.
+///
+/// \param path Path to the asset.
+/// \returns The loaded asset.
+auto openAsset(Path const& path) -> Asset;
+```
+
+## Headers
+
+Use `#pragma once` in project-owned headers.
+
+Header self-containment and include ownership are defined in [`structure.md`](structure.md#headers-are-self-contained).
+
 ## Interfaces and Implementations
 
 An abstract runtime interface uses the natural name of the role it represents:
@@ -113,6 +205,30 @@ RemoteRenderer
 ```
 
 If there is truly no useful qualifier and the implementation needs a separate name, an `-Impl` suffix may be used locally as an escape hatch. It is not a general naming convention.
+
+## Functional Types
+
+A type that represents one focused operation may be named directly for that operation:
+
+```cpp
+// GOOD
+FormatDiagnostic formatDiagnostic;
+ValidateMesh validateMesh;
+LoadTexture loadTexture;
+```
+
+Do not invent a noun-form type name just so the instance can use the natural verb name:
+```cpp
+// BAD
+MeshValidator validateMesh;
+```
+
+When the contextual role differs from the operation itself, name the instance for that role:
+
+```cpp
+// GOOD
+LowerBoundBisector inverter;
+```
 
 ## Concepts
 
@@ -153,63 +269,6 @@ public:
 
 Use `Type` for type parameters and `Value` for non-type template parameters when the names would otherwise collide. Do not add these suffixes when there is no collision.
 
-## Functional Types
-
-A type that represents one focused operation may be named directly for that operation:
-
-```cpp
-// GOOD
-FormatDiagnostic formatDiagnostic;
-ValidateMesh validateMesh;
-LoadTexture loadTexture;
-```
-
-Do not invent a noun-form type name just so the instance can use the natural verb name:
-```cpp
-// BAD
-MeshValidator validateMesh;
-```
-
-When the contextual role differs from the operation itself, name the instance for that role:
-
-```cpp
-// GOOD
-LowerBoundBisector inverter;
-```
-
-## Comments
-
-Comments explain purpose, constraints, invariants, or non-obvious behavior instead of narrating code whose meaning is already clear.
-
-Give a type or function a short summary when its purpose is not clear from its name. Write function summaries in the present tense with an implied "This function" subject: "Allocates memory for the requested elements," not "Allocate memory for the requested elements."
-
-Describe what a function does, including its contract, constraints, and important effects. Put comments about how the implementation works in the function body. Mention implementation details at the function boundary only when callers need to know them.
-
-Describe what a type represents or is responsible for rather than listing its members.
-
-Use block-level comments when several statements implement one non-obvious operation. Explain the approach once instead of commenting each line.
-
-Use `//` for ordinary comments, including comments that span several lines. Reserve `/* ... */` for comments embedded in C++ syntax where a line comment would not fit naturally, such as an omitted parameter name or a short argument annotation.
-
-Use `///` for Doxygen documentation comments. Use backslash commands such as `\param` and `\returns` rather than the equivalent `@` forms. Do not use `/** ... */` or `/*! ... */` for ordinary project documentation comments.
-
-For example:
-
-```cpp
-// Preserve the previous value until every validation step succeeds.
-// This keeps a failed update from changing visible state.
-auto const candidate = parseConfig(input);
-
-auto setCallback(Callback callback, int /*priority*/) -> void;
-auto result = parse(input, /*allowTrailing=*/false);
-
-/// Opens the requested asset.
-///
-/// \param path Path to the asset.
-/// \returns The loaded asset.
-auto openAsset(Path const& path) -> Asset;
-```
-
 ## Testing
 
 Generally, test doubles are named like regular types and instances. There is no need to draw attention to the fact that an instance is a test double when it is the only object serving that role in the test.
@@ -240,62 +299,3 @@ struct Generator {
 StrictMock<MockGenerator> mockGenerator;
 Generator generator{&mockGenerator};
 ```
-
-## Headers
-
-Use `#pragma once` in project-owned headers.
-
-Header self-containment and include ownership are defined in [`structure.md`](structure.md#headers-are-self-contained).
-
-## Constexpr
-
-Prefer `constexpr` for functions that can naturally support constant evaluation. Do not restructure an interface or complicate an implementation solely to make a function `constexpr`.
-
-In particular, use `constexpr` freely for small value-type operations, accessors, constructors, operators, and header-defined utilities when their implementation permits it.
-
-## Construction
-
-Prefer braces when constructing objects directly:
-
-```cpp
-Renderer renderer{device, queue};
-auto config = Config{width, height};
-```
-
-Use parentheses when braces would select different semantics or cannot express the intended construction. This most often matters for types with `std::initializer_list` constructors. For example, use `std::vector<int> values(8, -1);` when the intent is eight copies of `-1`; braces would instead construct a two-element vector.
-
-## Local Variables
-
-Use `auto` for local variables unless it cannot express the intended declaration. Write `const` to the right of the type it qualifies. When a local value is not intended to change, prefer `auto const`.
-
-Preserve reference semantics explicitly. Bare `auto` creates a value and drops references and top-level `const`; use `auto&` or `auto const&` when the local is intended to refer to the original object. Use `auto&&` only when its reference-collapsing behavior is intentional. The same qualifier rule composes with pointers: `auto const*` points to a const value, while `auto* const` is a const pointer.
-
-For example:
-
-```cpp
-auto const count = values.size();
-auto const& current = values.front();
-auto& destination = outputs.back();
-```
-
-Explicit types are necessary for instances that are deliberately uninitialized until a later conditional assignment or used as an out parameter. For example:
-
-```cpp
-int exponent;
-auto const fraction = std::frexp(value, &exponent);
-```
-
-## Function Declarations
-
-Use concrete trailing return types for functions:
-
-```cpp
-auto size() const -> std::size_t;
-auto render(Frame const& frame) -> void;
-```
-
-Do not use a deduced function return type only to avoid spelling the return type. Deduced return types are useful in some cases, but avoid them unless they are necessary.
-
-Use another return-type form only when required by external tooling or language integration, such as declarations processed by Qt MOC or exposed to QML.
-
-Use `[[nodiscard]]` when accidentally discarding a result would lose a resource or failure information. Do not apply it broadly to ordinary return values.
