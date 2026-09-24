@@ -51,3 +51,9 @@ standards/
 submodule.
 
 `standards/` is repository policy rather than a build dependency, so it does not belong under `external/`.
+
+## Revision Control
+
+Use [Conventional Commits](https://www.conventionalcommits.org/).
+
+Keep the subject to 50 characters when practical. Wrap commit message bodies at 80 characters.
