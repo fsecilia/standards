@@ -2,6 +2,8 @@
 
 This document defines shared C++ naming and source-level conventions.
 
+Where this document is silent, follow the naming rules below and the nearby code.
+
 ## Language and Toolchain
 
 Use C++26 mode for project-owned C++. Code must compile with GCC 14.2 and Clang 17.0 unless a project documents a newer compiler requirement.
@@ -251,7 +253,7 @@ Prefer `constexpr` for functions that can naturally support constant evaluation.
 
 In particular, use `constexpr` freely for small value-type operations, accessors, constructors, operators, and header-defined utilities when their implementation permits it.
 
-## C++
+## Construction
 
 Prefer braces when constructing objects directly:
 
@@ -261,6 +263,8 @@ auto config = Config{width, height};
 ```
 
 Use parentheses when braces would select different semantics or cannot express the intended construction. This most often matters for types with `std::initializer_list` constructors. For example, use `std::vector<int> values(8, -1);` when the intent is eight copies of `-1`; braces would instead construct a two-element vector.
+
+## Local Variables
 
 Use `auto` for local variables unless it cannot express the intended declaration. Write `const` to the right of the type it qualifies. When a local value is not intended to change, prefer `auto const`.
 
@@ -281,6 +285,8 @@ int exponent;
 auto const fraction = std::frexp(value, &exponent);
 ```
 
+## Function Declarations
+
 Use concrete trailing return types for functions:
 
 ```cpp
@@ -293,5 +299,3 @@ Do not use a deduced function return type only to avoid spelling the return type
 Use another return-type form only when required by external tooling or language integration, such as declarations processed by Qt MOC or exposed to QML.
 
 Use `[[nodiscard]]` when accidentally discarding a result would lose a resource or failure information. Do not apply it broadly to ordinary return values.
-
-Where this document is silent, follow the naming rules above and the nearby code.
