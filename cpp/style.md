@@ -187,6 +187,27 @@ Describe what a type represents or is responsible for rather than listing its me
 
 Use block-level comments when several statements implement one non-obvious operation. Explain the approach once instead of commenting each line.
 
+Use `//` for ordinary comments, including comments that span several lines. Reserve `/* ... */` for comments embedded in C++ syntax where a line comment would not fit naturally, such as an omitted parameter name or a short argument annotation.
+
+Use `///` for Doxygen documentation comments. Use backslash commands such as `\param` and `\returns` rather than the equivalent `@` forms. Do not use `/** ... */` or `/*! ... */` for ordinary project documentation comments.
+
+For example:
+
+```cpp
+// Preserve the previous value until every validation step succeeds.
+// This keeps a failed update from changing visible state.
+auto const candidate = parseConfig(input);
+
+auto setCallback(Callback callback, int /*priority*/) -> void;
+auto result = parse(input, /*allowTrailing=*/false);
+
+/// Opens the requested asset.
+///
+/// \param path Path to the asset.
+/// \returns The loaded asset.
+auto openAsset(Path const& path) -> Asset;
+```
+
 ## Testing
 
 Generally, test doubles are named like regular types and instances. There is no need to draw attention to the fact that an instance is a test double when it is the only object serving that role in the test.
