@@ -197,6 +197,8 @@ auto result = parse(input, /*allowTrailing=*/false);
 auto openAsset(Path const& path) -> Asset;
 ```
 
+When writing comments, aim for a Flesch-Kincaid reading level of about 10-12.
+
 ## Headers
 
 Use `#pragma once` in project-owned headers.
