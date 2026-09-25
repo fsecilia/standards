@@ -10,7 +10,7 @@ Assert internal invariants and states that indicate a programming error. Do not 
 
 Error-carrying results must not be silently discardable. Mark project-owned error-carrying types `[[nodiscard]]`. When the result type cannot carry that attribute, mark the returning function instead.
 
-These standards do not choose one error-transport mechanism for every project. Use exceptions, explicit error values, or another mechanism according to the contract being expressed.
+These standards do not choose one error-transport mechanism for every project. Use exceptions, std::unexpected, explicit error values, or another mechanism according to the contract being expressed.
 
 ## Value Semantics
 
