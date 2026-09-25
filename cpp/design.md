@@ -6,7 +6,9 @@ The main goals are explicit dependencies, components that can be tested in isola
 
 ## Errors and Invariants
 
-Assert internal invariants and states that indicate a programming error. Do not use assertions for expected runtime failures.
+Assert internal invariants and states that indicate a programming error. These are conditions a user can do nothing about and should not be propagated; they should not make it out of testing.
+
+Do not use assertions for expected runtime failures. Do not both assert an error condition, then supply a handler for it; that prevents testing the handler during debug builds.
 
 Error-carrying results must not be silently discardable. Mark project-owned error-carrying types `[[nodiscard]]`. When the result type cannot carry that attribute, mark the returning function instead.
 
