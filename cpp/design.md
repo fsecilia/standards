@@ -4,6 +4,14 @@ This document defines the shared C++ programming model and the design choices we
 
 The main goals are explicit dependencies, components that can be tested in isolation, strong compile-time composition, and an object graph that can also be tested as a complete system.
 
+## Value Semantics
+
+Prefer value semantics when they fit the component. Values make ownership, lifetime, and composition easier to reason about and work naturally with the static composition model used here.
+
+Custom move constructors and move assignment operators are `noexcept`. Do not write a throwing custom move only to keep a type movable.
+
+Implicit and defaulted moves may throw when a member's move throws. Do not assume that generic or injected types move without throwing. Require nothrow movement only at a boundary that needs it.
+
 ## Testing Model
 
 The repository-wide testing rules in [`../testing.md`](../testing.md) apply to C++ tests.
@@ -43,14 +51,6 @@ Use dependency injection; consumers receive their behavioral dependencies instea
 Inject dependency types through template parameters and dependency instances through construction. When a dependency can be represented directly in the object graph, do not hide it behind globals, service locators, static state, or implicit lookup.
 
 Do not pass the construction details of a dependency through its consumer. Construct the dependency first, then give the completed dependency to the consumer.
-
-## Value Semantics
-
-Prefer value semantics when they fit the component. Values make ownership, lifetime, and composition easier to reason about and work naturally with the static composition model used here.
-
-Custom move constructors and move assignment operators are `noexcept`. Do not write a throwing custom move only to keep a type movable.
-
-Implicit and defaulted moves may throw when a member's move throws. Do not assume that generic or injected types move without throwing. Require nothrow movement only at a boundary that needs it.
 
 ## Errors and Invariants
 
