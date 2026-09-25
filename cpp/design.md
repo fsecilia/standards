@@ -4,6 +4,14 @@ This document defines the shared C++ programming model and the design choices we
 
 The main goals are explicit dependencies, components that can be tested in isolation, strong compile-time composition, and an object graph that can also be tested as a complete system.
 
+## Errors and Invariants
+
+Assert internal invariants and states that indicate a programming error. Do not use assertions for expected runtime failures.
+
+Error-carrying results must not be silently discardable. Mark project-owned error-carrying types `[[nodiscard]]`. When the result type cannot carry that attribute, mark the returning function instead.
+
+These standards do not choose one error-transport mechanism for every project. Use exceptions, explicit error values, or another mechanism according to the contract being expressed.
+
 ## Value Semantics
 
 Prefer value semantics when they fit the component. Values make ownership, lifetime, and composition easier to reason about and work naturally with the static composition model used here.
@@ -51,14 +59,6 @@ Use dependency injection; consumers receive their behavioral dependencies instea
 Inject dependency types through template parameters and dependency instances through construction. When a dependency can be represented directly in the object graph, do not hide it behind globals, service locators, static state, or implicit lookup.
 
 Do not pass the construction details of a dependency through its consumer. Construct the dependency first, then give the completed dependency to the consumer.
-
-## Errors and Invariants
-
-Assert internal invariants and states that indicate a programming error. Do not use assertions for expected runtime failures.
-
-Error-carrying results must not be silently discardable. Mark project-owned error-carrying types `[[nodiscard]]`. When the result type cannot carry that attribute, mark the returning function instead.
-
-These standards do not choose one error-transport mechanism for every project. Use exceptions, explicit error values, or another mechanism according to the contract being expressed.
 
 ## Static Composition
 
