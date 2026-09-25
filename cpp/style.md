@@ -93,6 +93,24 @@ Prefer names that describe meaning rather than implementation machinery.
 
 Do not use "foo", "bar", or other placeholder names for types or instances, even in examples.
 
+## Type Aliases
+
+Omit `typename` when a type alias already makes the top-level dependent name a type:
+
+```cpp
+using Alias = Composite::Nested;
+
+template <typename T>
+using Value = T::value_type;
+```
+
+Do not add `typename` there merely because the qualified name is dependent. Use it where the language requires it, such as when the dependent type appears inside a template argument:
+
+```cpp
+template <typename T>
+using WrappedValue = Wrapper<typename T::value_type>;
+```
+
 ## Construction
 
 Prefer braces when constructing objects directly:
