@@ -14,9 +14,13 @@ Compiler versions are build compatibility floors. Development tools are separate
 
 The `.clang-format` and `.clang-tidy` files in Standards define the shared mechanical baseline. Consuming projects normally copy and check in those files so editors, builds, and other tooling can use them directly.
 
-Use clang-format 17.0.6 with the shared `.clang-format` and clang-tidy 19.1.0 with the shared `.clang-tidy`. A project may pin a different development-tool version only after verifying that it accepts the shared configuration and preserves the intended mechanical rules.
-
 A project may deliberately change its local configuration. Document that difference as a project exception instead of duplicating the mechanical rule in prose.
+
+### Clang Tools Versions
+
+Use clang-format no older than 17.0.6. However, do not use clang-format 22; it has a bug in `AllowShortFunctionsOnASingleLine: InlineOnly` that affects our codebases. The minimum tested version of clang-tidy is 19.1.0.
+
+Choose a development-tool version only after verifying that it accepts the shared configuration and preserves the intended mechanical rules.
 
 ## Naming
 
