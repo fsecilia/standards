@@ -57,3 +57,7 @@ submodule.
 Use [Conventional Commits](https://www.conventionalcommits.org/).
 
 Keep the subject to 50 characters when practical. Wrap commit message bodies at 80 characters.
+
+## Prose and Comments
+
+When writing documentation and comments, aim for a Flesch-Kincaid grade level of about 10–12.
