@@ -69,6 +69,26 @@ Directories and namespaces do not need to match one-to-one.
 
 Add a nested namespace because it means something to the code, not simply because a directory exists.
 
+## File Prologue
+
+Begin each C++ file with an SPDX license identifier, followed by a blank line and a Doxygen file block.
+
+The file block should contain `\file` and a copyright notice for the project's current copyright holder. Add `\brief` when a short file-level description is useful. Do not populate the `\file` command because that makes refactoring difficult; doxygen will fill it out automatically.
+
+In header files, place `#pragma once` after the file block. Separate the license identifier, file block, `#pragma once`, and includes with blank lines.
+
+```cpp
+// SPDX-License-Identifier: MIT
+
+/// \file
+/// \brief Short description when useful
+/// \copyright Copyright (C) 2026 <copyright holder>
+
+#pragma once
+
+#include <project/library.hpp>
+```
+
 ## Includes
 
 Use root-qualified quoted includes for project headers:
