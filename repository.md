@@ -52,6 +52,34 @@ submodule.
 
 `standards/` is repository policy rather than a build dependency, so it does not belong under `external/`.
 
+## Development Tools
+
+Formatting and static-analysis tools are developer prerequisites rather than build prerequisites. A user who only builds the project does not need the formatting or linting tools.
+
+### clang-format
+
+Use clang-format 21.1.8 exactly. Formatting is committed source output, and different clang-format versions can produce different output from the same configuration. A formatter version range would allow contributors to reformat the same source back and forth.
+
+An isolated `pipx` installation provides the pinned formatter without tying it to the system Python environment:
+
+```sh
+pipx install --suffix=-21.1.8 'clang-format==21.1.8'
+```
+
+This exposes the formatter as `clang-format-21.1.8`. Configure editors and IDEs to invoke that executable rather than an unversioned formatter found elsewhere on the system. Machine-specific paths belong in local editor or IDE configuration. For VS Code with the C/C++ extension, set `C_Cpp.clang_format_path` to the versioned executable.
+
+### clang-tidy
+
+clang-tidy 21.1.6 is the minimum supported version. Unlike formatting, static-analysis output is not committed source, so compatible newer versions may be used.
+
+The current baseline can be installed with `pipx`:
+
+```sh
+pipx install --suffix=-21.1.6 'clang-tidy==21.1.6'
+```
+
+This installs the known-good baseline as `clang-tidy-21.1.6`; it does not make that exact version a requirement. clang-tidy still uses the project's normal C++ toolchain context and compilation database when it analyzes configured source.
+
 ## Revision Control
 
 Use [Conventional Commits](https://www.conventionalcommits.org/).

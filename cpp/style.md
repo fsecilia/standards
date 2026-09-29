@@ -16,12 +16,6 @@ The `.clang-format` and `.clang-tidy` files in Standards define the shared mecha
 
 A project may deliberately change its local configuration. Document that difference as a project exception instead of duplicating the mechanical rule in prose.
 
-### Clang Tools Versions
-
-Use clang-format no older than 17.0.6. However, do not use clang-format 22; it has a bug in `AllowShortFunctionsOnASingleLine: InlineOnly` that affects our codebases. The minimum tested version of clang-tidy is 19.1.0.
-
-Choose a development-tool version only after verifying that it accepts the shared configuration and preserves the intended mechanical rules.
-
 ## Naming
 
 Files and directories use `snake_case`, with `.hpp` and `.cpp` suffixes for C++ files. Types, type aliases, concepts, and enum values use `PascalCase`.
