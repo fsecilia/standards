@@ -301,6 +301,15 @@ public:
 
 Use `Type` for type parameters and `Value` for non-type template parameters when the names would otherwise collide. Do not add these suffixes when there is no collision.
 
+## Preprocessor
+
+Preprocessor conditionals should use `#if defined` and `#if !defined` rather than `#ifdef` and `#ifndef` respectively. Avoid unnecessary parentheses:
+
+```cpp
+#if !defined condition
+#endif
+```
+
 ## Testing
 
 Generally, test doubles are named like regular types and instances. There is no need to draw attention to the fact that an instance is a test double when it is the only object serving that role in the test.
