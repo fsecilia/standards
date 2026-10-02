@@ -162,7 +162,13 @@ auto size() const -> std::size_t;
 auto render(Frame const& frame) -> void;
 ```
 
-Do not use a deduced function return type only to avoid spelling the return type. Deduced return types are useful in some cases, but avoid them unless they are necessary.
+Do not use a deduced function return type only to avoid spelling the return type. Deduced return types are useful in some cases, but avoid them unless they are necessary. If a return type can be determined from template parameters, spell that type explicitly.
+
+When `decltype(auto)` is necessary to preserve a return type that cannot otherwise be named reliably, keep it in trailing-return form:
+
+```cpp
+constexpr auto forward() -> decltype(auto);
+```
 
 Use another return-type form only when required by external tooling or language integration, such as declarations processed by Qt MOC or exposed to QML.
 
