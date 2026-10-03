@@ -6,7 +6,7 @@ Where this document is silent, follow the naming rules below and the nearby code
 
 ## Language and Toolchain
 
-Use C++26 mode for project-owned C++. Code must compile with GCC 14.2 and Clang 17.0 unless a project documents a newer compiler requirement.
+Use C++26 mode for project-owned C++. Code must compile with GCC 14.2 and Clang 19.0 unless a project documents a newer compiler requirement.
 
 Compiler versions are build compatibility floors. Development tools are separate dependencies and may require newer LLVM versions than the supported compiler. A user who only builds the project does not need the formatting or linting tools.
 
