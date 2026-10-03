@@ -18,9 +18,9 @@ A project may deliberately change its local configuration. Document that differe
 
 ## Naming
 
-Files and directories use `snake_case`, with `.hpp` and `.cpp` suffixes for C++ files. Types, type aliases, concepts, and enum values use `PascalCase`.
+Files and directories use `snake_case`, with `.hpp` and `.cpp` suffixes for C++ files. Types, type aliases, and concepts use `PascalCase`.
 
-Functions, variables, parameters, and constants use `camelCase`; namespaces use `snake_case`.
+Functions, variables, parameters, constants, and enum values use `camelCase`; namespaces use `snake_case`.
 
 ### Macros
 
