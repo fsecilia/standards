@@ -28,16 +28,18 @@ Do not rely on accidental splitting, empty arguments, or unclear scalar-to-list 
 
 ## Conditionals
 
+Write `if(` and `elseif(` without a space before the opening parenthesis.
+
 CMake conditionals are a sharp edge. Take care when choosing to quote an expression because CMake gives unquoted condition arguments additional interpretation. A value can be treated as a boolean constant, variable name, keyword, or another part of the condition syntax instead of as the value the caller supplied. Quoting prevents this extra interpretation where the condition grammar accepts a value.
 
-Do not turn this into a rule that every condition must use quoted expansion. Forms such as `if (variable)`, `DEFINED`, `TARGET`, `COMMAND`, `EXISTS`, and `IN_LIST` have their own operand rules. Use the form that expresses the intended test.
+Do not turn this into a rule that every condition must use quoted expansion. Forms such as `if(variable)`, `DEFINED`, `TARGET`, `COMMAND`, `EXISTS`, and `IN_LIST` have their own operand rules. Use the form that expresses the intended test.
 
 Write conditions so it is clear whether an argument is a variable name or a value.
 
 For a boolean variable, test the variable directly:
 
 ```cmake
-if (feature_enabled)
+if(feature_enabled)
     ...
 endif()
 ```
@@ -45,16 +47,16 @@ endif()
 Use explicit, quoted expansion when comparing values:
 
 ```cmake
-if ("${actual}" STREQUAL "${expected}")
+if("${actual}" STREQUAL "${expected}")
     ...
 endif()
 ```
 
-Do not expand a value into an unquoted `if ()` argument when that argument is meant to remain a value:
+Do not expand a value into an unquoted `if()` argument when that argument is meant to remain a value:
 
 ```cmake
-# Avoid: the expanded value may be interpreted again by if ().
-if (${value})
+# Avoid: the expanded value may be interpreted again by if().
+if(${value})
     ...
 endif()
 ```
@@ -62,18 +64,18 @@ endif()
 Take extra care with `macro()` arguments. Macro arguments are textual substitutions, not normal CMake variables. An expression such as:
 
 ```cmake
-if (argument)
+if(argument)
 ```
 
 tests a variable named `argument`; it does not test the macro argument. Expand the argument when its value is required:
 
 ```cmake
-if ("${argument}")
+if("${argument}")
     ...
 endif()
 ```
 
-Do not rely on `AND` or `OR` to short-circuit. CMake evaluates both sides of these operators. Split a condition into nested `if ()` statements when evaluating one part safely depends on another part being true.
+Do not rely on `AND` or `OR` to short-circuit. CMake evaluates both sides of these operators. Split a condition into nested `if()` statements when evaluating one part safely depends on another part being true.
 
 ## Naming
 
