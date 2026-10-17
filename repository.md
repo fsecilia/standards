@@ -89,3 +89,5 @@ Keep the subject to 50 characters when practical. Wrap commit message bodies at 
 ## Prose and Comments
 
 When writing documentation and comments, aim for a Flesch-Kincaid grade level of about 10–12.
+
+Do not hard-wrap text or Markdown prose in READMEs, ledgers, or other documentation. Keep each paragraph or list item on a single source line and let the editor or renderer soft-wrap it. Preserve deliberate line breaks where Markdown syntax or clarity requires them, such as tables, code fences, and lists. This does not change the 80-column rule for commit message bodies.

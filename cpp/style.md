@@ -184,6 +184,8 @@ In particular, use `constexpr` freely for small value-type operations, accessors
 
 Comments explain purpose, constraints, invariants, or non-obvious behavior instead of narrating code whose meaning is already clear.
 
+For source comments, use the configured C++ column limit (120 in the shared `.clang-format`), not a separate 80–column prose limit. Indentation and comment prefixes count toward the column limit. Wrap long comments at natural boundaries rather than squeezing everything onto one line. Do not arbitrarily break on punctuation.
+
 Give a type or function a short summary when its purpose is not clear from its name. Write function summaries in the present tense with an implied "This function" subject: "Allocates memory for the requested elements," not "Allocate memory for the requested elements."
 
 Describe what a function does, including its contract, constraints, and important effects. Put comments about how the implementation works in the function body. Mention implementation details at the function boundary only when callers need to know them.
