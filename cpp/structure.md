@@ -86,19 +86,22 @@ In header files, place `#pragma once` after the file block. Separate the license
 
 #pragma once
 
-#include <project/library.hpp>
+#include "project/library.hpp"
 ```
 
 ## Includes
 
-Use root-qualified quoted includes for project headers:
+Use double quotes for project headers and angle brackets for external and standard-library headers. Use project-root paths for project headers, except for the principal header.
+
+Keep includes in one block, with no blank lines or category comments. Let clang-format sort them in this order: principal header, other project headers, external headers, then standard-library headers.
 
 ```cpp
+#include "window.hpp"
 #include "axiom/platform/renderer.hpp"
-#include "axiom/platform/window.hpp"
+#include <SDL3/SDL_log.h>
+#include <cstdint>
+#include <utility>
 ```
-
-This keeps the include stable when the including file moves elsewhere in the repository while following the usual distinction between project-owned headers and system or externally supplied headers.
 
 Do not use relative traversal such as:
 
@@ -127,7 +130,7 @@ A published header must not include a private header from the same project.
 
 The principal header of an implementation or isolation-test translation unit is the header for the component that file implements or tests. Use the same basename unless a different mapping is clearer.
 
-A `.cpp` or `_test.cpp` file beside its principal header may include that header directly:
+A `.cpp` or `_test.cpp` file with an adjacent principal header must include it first, using only the filename in double quotes:
 
 ```cpp
 #include "window.hpp"
@@ -141,17 +144,13 @@ window.cpp
 window_test.cpp
 ```
 
-Both `window.cpp` and `window_test.cpp` may use:
+Both `window.cpp` and `window_test.cpp` use:
 
 ```cpp
 #include "window.hpp"
 ```
 
 This exception applies only to the principal header.
-
-Use root-qualified quoted includes for other project headers.
-
-Keep the principal header first in an implementation or isolation-test translation unit. This helps expose missing dependencies in that header.
 
 ## Include Ownership
 
@@ -161,7 +160,7 @@ For example, if `renderer.cpp` uses a declaration from `window.hpp`, include `wi
 
 This keeps each file's dependencies explicit. It also lets a header remove an include it no longer needs without breaking an implementation or test that used it indirectly.
 
-The principal-header rule still applies: include the principal header first, then the other direct dependencies according to the project's formatting configuration.
+The principal-header and include-order rules still apply.
 
 ## Tests
 
