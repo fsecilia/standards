@@ -180,6 +180,10 @@ Prefer `constexpr` for functions that can naturally support constant evaluation.
 
 In particular, use `constexpr` freely for small value-type operations, accessors, constructors, operators, and header-defined utilities when their implementation permits it.
 
+## Literals
+
+Write hexadecimal literals with a lowercase 0x prefix and lowercase digits (a–f). Write built-in numeric literal suffixes in uppercase (U, L, LL, F, etc.). Preserve the spelling of user-defined literal suffixes.
+
 ## Comments
 
 Comments explain purpose, constraints, invariants, or non-obvious behavior instead of narrating code whose meaning is already clear.
