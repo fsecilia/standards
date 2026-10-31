@@ -121,6 +121,14 @@ template <typename T>
 using WrappedValue = Wrapper<typename T::value_type>;
 ```
 
+## Integer Types
+
+Prefer signed integers for ordinary arithmetic, counts, and indices. Use `int` by default, or a project's chosen signed arithmetic type. Standards does not define a shared integer alias.
+
+Use fixed-width integer types when width is part of a contract, such as serialized data. Use unsigned integers for intentional wraparound and bit operations. Use standard-library integer types when an interface requires them. Avoid mixing signed and unsigned arithmetic, and check that values fit when converting between integer types.
+
+Use `std::ssize` when a container's size will be used in signed arithmetic.
+
 ## Construction
 
 Prefer braces when constructing objects directly:
@@ -141,7 +149,7 @@ Preserve reference semantics explicitly. Bare `auto` creates a value and drops r
 For example:
 
 ```cpp
-auto const count = values.size();
+auto const count = std::ssize(values);
 auto const& current = values.front();
 auto& destination = outputs.back();
 ```
@@ -158,7 +166,7 @@ auto const fraction = std::frexp(value, &exponent);
 Use concrete trailing return types for functions:
 
 ```cpp
-auto size() const -> std::size_t;
+auto size() const -> int;
 auto render(Frame const& frame) -> void;
 ```
 
@@ -296,14 +304,14 @@ RendererLike
 Name template parameters according to what they represent:
 
 ```cpp
-template <typename Allocator, std::size_t capacity>
+template <typename Allocator, int capacity>
 class Container;
 ```
 
 When a parameter is redeclared inside the type body, add its language category to avoid the name collision:
 
 ```cpp
-template <typename AllocatorType, std::size_t capacityValue>
+template <typename AllocatorType, int capacityValue>
 class Container {
 public:
     using Allocator = AllocatorType;
