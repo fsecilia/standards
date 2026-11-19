@@ -22,18 +22,6 @@ Files and directories use `snake_case`, with `.hpp` and `.cpp` suffixes for C++ 
 
 Functions, variables, parameters, constants, and enum values use `camelCase`; namespaces use `snake_case`.
 
-### Macros
-
-Macros do not have a required case. Name each macro for the construct or role it represents, and use casing that fits that role. A macro that stands in for a language construct or annotation may use the same style as that construct, while a configuration flag may use `UPPER_SNAKE_CASE`.
-
-For example:
-
-```cpp
-dink_api
-no_unique_address
-PROJECT_ENABLE_TRACING
-```
-
 These macros represent different kinds of things: an API annotation, a language-like construct, and a configuration flag. Forcing all three names into one case would hide that difference instead of making the code clearer.
 
 Because macros are not scoped, public macros should use a project-specific prefix when practical to reduce the risk of collisions.
@@ -64,6 +52,18 @@ Treat acronyms as words:
 GpuDevice gpuDevice;
 HttpClient httpClient;
 XmlParser xmlParser;
+```
+
+### Macros
+
+Macros do not have a required case. Name each macro for the construct or role it represents, and use casing that fits that role. A macro that stands in for a language construct or annotation may use the same style as that construct, while a configuration flag may use `UPPER_SNAKE_CASE`.
+
+For example:
+
+```cpp
+dink_api
+no_unique_address
+PROJECT_ENABLE_TRACING
 ```
 
 ## Names Describe Meaning
