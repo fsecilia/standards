@@ -182,15 +182,15 @@ Use another return-type form only when required by external tooling or language 
 
 Use `[[nodiscard]]` when accidentally discarding a result would lose a resource or failure information. Do not apply it broadly to ordinary return values.
 
+## Literals
+
+Write hexadecimal literals with a lowercase 0x prefix and lowercase digits (a–f). Write built-in numeric literal suffixes in uppercase (U, L, LL, F, etc.). Preserve the spelling of user-defined literal suffixes.
+
 ## Constexpr
 
 Prefer `constexpr` for functions that can naturally support constant evaluation. Do not restructure an interface or complicate an implementation solely to make a function `constexpr`.
 
 In particular, use `constexpr` freely for small value-type operations, accessors, constructors, operators, and header-defined utilities when their implementation permits it.
-
-## Literals
-
-Write hexadecimal literals with a lowercase 0x prefix and lowercase digits (a–f). Write built-in numeric literal suffixes in uppercase (U, L, LL, F, etc.). Preserve the spelling of user-defined literal suffixes.
 
 ## Comments
 
