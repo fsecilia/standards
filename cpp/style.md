@@ -186,6 +186,10 @@ Use `[[nodiscard]]` when accidentally discarding a result would lose a resource 
 
 Write hexadecimal literals with a lowercase 0x prefix and lowercase digits (a–f). Write built-in numeric literal suffixes in uppercase (U, L, LL, F, etc.). Preserve the spelling of user-defined literal suffixes.
 
+## Constants
+
+Never duplicate a literal constant. Always give constants used in more than one location a name. Do not hard-code constants in tests. Changing a constant should not tend to break tests.
+
 ## Constexpr
 
 Prefer `constexpr` for functions that can naturally support constant evaluation. Do not restructure an interface or complicate an implementation solely to make a function `constexpr`.
